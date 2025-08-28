@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby - Conectando Talentos e Empresas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Warm Neutrals with Blue and Orange accents -->
+    <!-- Application Structure Plan: A single-page scrolling SPA with a sticky navigation bar. The sections are thematic: Hero, Problem, Solution, How it Works, Traction (interactive dashboard), and Partnership CTA. This structure allows users to explore the information non-linearmente, focusing on their area of interest (e.g., a company can jump straight to the solution for recruiters). The interactive dashboard for 'Traction' makes the data more engaging than a static slide. -->
+    <!-- Visualization & Content Choices: Hero: Inform -> Strong Headline + Dual CTAs. Problem/Solution: Compare -> Tabbed interface to directly contrast pain points with benefits. How It Works: Organize -> 3-step HTML/CSS diagram for clarity. Traction: Inform/Engage -> Dynamic counters for key metrics (Talents, Partners) and a Chart.js donut chart to visualize the talent pool composition. This is more impactful than static 'X' values. Partnership: Call to Action -> Clear contact form/button. All visualizations are Canvas-based (Chart.js) or HTML/CSS. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 80vh;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #4F46E5, #A855F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #4F46E5;
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#hero" class="text-2xl font-bold gradient-text">Lobby</a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#problema" class="nav-link text-gray-600 font-medium">O Problema</a>
+                <a href="#solucao" class="nav-link text-gray-600 font-medium">A Solução</a>
+                <a href="#tracao" class="nav-link text-gray-600 font-medium">Nossa Tração</a>
+                <a href="#proposta" class="nav-link text-gray-600 font-medium">Parceria</a>
+            </nav>
+            <a href="#proposta" class="hidden md:block bg-indigo-600 text-white font-semibold px-5 py-2 rounded-lg cta-button">Seja um Parceiro</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="pt-32 pb-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
+                    Conecte o talento à <span class="gradient-text">oportunidade certa.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-10">
+                    O ecossistema do Lobby inverte a lógica do mercado de trabalho para dar visibilidade aos talentos e eficiência à busca por profissionais.
+                </p>
+            </div>
+        </section>
+
+        <section id="problema" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">O Problema do Mercado de Trabalho Local</h2>
+                    <p class="text-lg text-gray-600">Uma desconexão que limita o potencial de todos.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold mb-3 text-red-500">1. Oportunidades Invisíveis</h3>
+                        <p class="text-gray-600">Vagas não chegam a quem precisa. Candidatos qualificados, jovens ou experientes, não são vistos pelo mercado, gerando frustração e desperdício de potencial.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold mb-3 text-yellow-500">2. Recrutador Submerso</h3>
+                        <p class="text-gray-600">Empresas são inundadas por currículos genéricos, tornando o processo seletivo lento, caro e ineficiente. Encontrar o perfil certo vira uma busca exaustiva.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold mb-3 text-purple-500">3. Crescimento Limitado</h3>
+                        <p class="text-gray-600">A desconexão entre talentos e empresas impede o crescimento do nosso ecossistema local, resultando em um ciclo vicioso de oportunidades perdidas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solucao" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">A Solução: Quebrando o Ciclo Vicioso</h2>
+                    <p class="text-lg text-gray-600">O Lobby é a resposta que reconecta o mercado.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-indigo-50 p-8 rounded-xl border border-indigo-200">
+                        <h3 class="text-xl font-bold mb-3 text-indigo-700">1. O Talento é Encontrado</h3>
+                        <p class="text-gray-700">Fim da busca frustrante. O candidato cria um perfil e se torna visível para as empresas certas, sendo encontrado por oportunidades alinhadas ao seu potencial.</p>
+                    </div>
+                    <div class="bg-green-50 p-8 rounded-xl border border-green-200">
+                        <h3 class="text-xl font-bold mb-3 text-green-700">2. Contratação Inteligente</h3>
+                        <p class="text-gray-700">Chega de currículos genéricos. Oferecemos um banco de talentos organizado e filtrável, permitindo que empresas encontrem o perfil ideal em minutos.</p>
+                    </div>
+                    <div class="bg-purple-50 p-8 rounded-xl border border-purple-200">
+                        <h3 class="text-xl font-bold mb-3 text-purple-700">3. Crescimento Acelerado</h3>
+                        <p class="text-gray-700">Agilizamos a contratação, reduzindo tempo e custo. Candidatos têm chances reais e a comunidade local prospera, criando um ciclo virtuoso de oportunidades.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="como-funciona" class="py-20">
+             <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">Uma Jornada Simples Para Todos</h2>
+                    <p class="text-lg text-gray-600">Conectar-se nunca foi tão fácil.</p>
+                </div>
+                <div class="relative">
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-indigo-200"></div>
+                    <div class="grid md:grid-cols-3 gap-12 relative">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-indigo-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">1</div>
+                            <h3 class="text-xl font-semibold mb-2">Cadastro</h3>
+                            <p class="text-gray-600">Talentos de todas as áreas (jovens, experientes, autônomos) criam seus perfis uma única vez, de forma rápida e intuitiva. Depois, é só aguardar ser chamado.</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-indigo-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">2</div>
+                            <h3 class="text-xl font-semibold mb-2">Encontro</h3>
+                            <p class="text-gray-600">Recrutadores buscam por perfis específicos usando filtros inteligentes, encontrando o candidato ideal.</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-indigo-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">3</div>
+                            <h3 class="text-xl font-semibold mb-2">Conexão</h3>
+                            <p class="text-gray-600">A empresa entra em contato direto com o talento, iniciando o processo seletivo de forma ágil e pessoal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tracao" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">O Sucesso é Construído em Comunidade</h2>
+                    <p class="text-lg text-gray-600">Nossos números iniciais mostram que estamos no caminho certo.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="bg-gray-50 p-6 rounded-lg mb-4 flex items-center space-x-4">
+                            <span class="text-4xl font-bold text-indigo-600" id="talentos-count">0</span>
+                            <p class="text-lg text-gray-700">Talentos já cadastrados e visíveis para o mercado.</p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg mb-4 flex items-center space-x-4">
+                            <span class="text-4xl font-bold text-indigo-600" id="parcerias-count">0</span>
+                            <p class="text-lg text-gray-700">Instituições de ensino em negociação para fortalecer nosso ecossistema.</p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg flex items-center space-x-4">
+                            <span class="text-4xl font-bold text-indigo-600">100%</span>
+                            <p class="text-lg text-gray-700">Focado em São José do Rio Preto, para impulsionar a economia local.</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="talentosChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="proposta" class="py-20 bg-indigo-700 text-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Junte-se à Revolução da Empregabilidade</h2>
+                <p class="text-lg md:text-xl text-indigo-200 max-w-3xl mx-auto mb-10">
+                    O Lobby é mais do que uma plataforma, é um movimento. Sua validação como parceiro é a chave para o nosso sucesso e para o fortalecimento do nosso ecossistema.
+                </p>
+                <div class="bg-white text-gray-800 p-8 rounded-xl max-w-2xl mx-auto text-left shadow-2xl">
+                    <h3 class="text-2xl font-bold mb-4">Proposta de Parceria Estratégica e Gratuita</h3>
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex items-start"><span class="text-indigo-500 mr-3 mt-1">✔</span><span>Acesso exclusivo e prioritário ao nosso banco de talentos para encontrar os melhores profissionais.</span></li>
+                        <li class="flex items-start"><span class="text-indigo-500 mr-3 mt-1">✔</span><span>Dados e insights sobre a oferta e a demanda do mercado local para tomadas de decisão estratégicas.</span></li>
+                        <li class="flex items-start"><span class="text-indigo-500 mr-3 mt-1">✔</span><span>Posicionamento como empresa ou instituição inovadora e comprometida com o desenvolvimento local.</span></li>
+                    </ul>
+                    <a href="mailto:suportesoulobby@gmail.com" class="mt-8 inline-block w-full text-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-lg cta-button text-lg">Quero ser um Parceiro</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6 text-center">
+            <p class="font-bold text-xl mb-2">Lobby</p>
+            <p class="text-gray-400 mb-4">Felipe Gianini Romero Silva</p>
+            <p class="text-gray-400">suportesoulobby@gmail.com | (17) 98823-6897 | <a href="https://meulobby.com.br/" class="text-indigo-400 hover:underline">meulobby.com.br</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const animateCount = (element, target) => {
+                let current = 0;
+                const step = target / 100;
+                const interval = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        clearInterval(interval);
+                        element.textContent = target.toString();
+                    } else {
+                        element.textContent = Math.ceil(current).toString();
+                    }
+                }, 20);
+            };
+
+            const talentosCount = document.getElementById('talentos-count');
+            const parceriasCount = document.getElementById('parcerias-count');
+            
+            animateCount(talentosCount, 7);
+            animateCount(parceriasCount, 5);
+
+            const ctx = document.getElementById('talentosChart').getContext('2d');
+            const talentosChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tecnologia', 'Administração', 'Comunicação', 'Engenharia', 'Outros'],
+                    datasets: [{
+                        label: 'Talentos por Área',
+                        data: [35, 25, 15, 10, 15],
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(236, 72, 153, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(156, 163, 175, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 255, 255, 1)'
+                        ],
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#4B5563',
+                                font: {
+                                    size: 14,
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const header = document.getElementById('header');
+            let lastScrollY = window.scrollY;
+            window.addEventListener('scroll', () => {
+                if(lastScrollY < window.scrollY) {
+                    header.classList.add('-translate-y-full');
+                } else {
+                    header.classList.remove('-translate-y-full');
+                }
+                lastScrollY = window.scrollY;
+            });
+        });
+    </script>
+</body>
+</html>
