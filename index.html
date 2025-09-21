@@ -72,43 +72,85 @@
         </div>
     </footer>
 
+    <div id="order-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-wood-100 rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-lg transform transition-transform duration-300 scale-95">
+            <h2 class="text-2xl font-bold text-pine-900 mb-6 text-center">Finalizar Pedido</h2>
+            <form id="delivery-form" class="space-y-4">
+                <div>
+                    <label for="cidade" class="block text-sm font-medium text-gray-700">Cidade</label>
+                    <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                </div>
+                <div>
+                    <label for="endereco" class="block text-sm font-medium text-gray-700">Endereço (Rua, Av.)</label>
+                    <input type="text" id="endereco" name="endereco" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="numero" class="block text-sm font-medium text-gray-700">Número</label>
+                        <input type="text" id="numero" name="numero" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                    </div>
+                    <div>
+                        <label for="cep" class="block text-sm font-medium text-gray-700">CEP</label>
+                        <input type="text" id="cep" name="cep" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                    </div>
+                </div>
+                <div>
+                    <label for="referencia" class="block text-sm font-medium text-gray-700">Ponto de Referência (Opcional)</label>
+                    <input type="text" id="referencia" name="referencia" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                </div>
+                <div>
+                    <label for="pagamento" class="block text-sm font-medium text-gray-700">Forma de Pagamento</label>
+                    <select id="pagamento" name="pagamento" required class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                        <option value="" disabled selected>Selecione uma opção...</option>
+                        <option value="PIX">PIX</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-button" class="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-lg hover:bg-gray-400 transition-colors">Cancelar</button>
+                    <button type="submit" class="px-6 py-2 bg-lime-600 text-white font-semibold rounded-lg hover:bg-lime-700 transition-colors">Confirmar e Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const products = [
-            {
+             {
                 name: 'Azeite Extra Virgem Premium',
                 description: 'Azeite de azeitonas Arbequina e Picual. Sabor complexo e equilibrado com notas herbáceas. Disponível para pronta entrega.',
                 price: 'R$ 75,00',
-                image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Premium',
-                baseWhatsappText: 'Olá, gostaria de pedir' // Texto base para o WhatsApp
+                image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Premium'
             },
             {
                 name: 'Azeite Orgânico Suave',
                 description: 'Produzido com métodos orgânicos. Possui um sabor suave e frutado, perfeito para pratos delicados. Disponível para pronta entrega.',
                 price: 'R$ 85,00',
-                image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Organico',
-                baseWhatsappText: 'Olá, gostaria de pedir'
+                image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Organico'
             },
             {
                 name: 'Azeite de Pimenta Malagueta',
                 description: 'Um azeite infusionado com pimenta. Ideal para quem busca um toque picante e marcante. Disponível para pronta entrega.',
                 price: 'R$ 70,00',
-                image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Picante',
-                baseWhatsappText: 'Olá, gostaria de pedir'
+                image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Picante'
             }
         ];
 
         const productList = document.getElementById('product-list');
         const phoneNumber = '5517992173645'; // Seu número de telefone
 
-        // Função para gerar a URL do WhatsApp com base na quantidade
-        const generateWhatsappUrl = (product, quantity) => {
-            const message = `${product.baseWhatsappText} ${quantity} unidade(s) do ${product.name}.`;
-            return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        };
+        // Elementos do Modal
+        const orderModal = document.getElementById('order-modal');
+        const modalContent = orderModal.querySelector('div');
+        const deliveryForm = document.getElementById('delivery-form');
+        const cancelButton = document.getElementById('cancel-button');
+        
+        let currentOrderDetails = {};
 
         // Renderiza os produtos na página
         products.forEach((product, index) => {
-            const initialUrl = generateWhatsappUrl(product, 1);
             const productCard = `
                 <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover">
@@ -123,43 +165,107 @@
                             <button data-index="${index}" data-action="increase" class="h-10 w-10 text-xl font-bold bg-gray-200 rounded-r-md hover:bg-gray-300 transition-colors">+</button>
                         </div>
                         
-                        <a href="${initialUrl}" id="whatsapp-link-${index}" target="_blank" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 inline-block">
+                        <button data-index="${index}" data-action="open-modal" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 inline-block">
                             Pedir via WhatsApp
-                        </a>
+                        </button>
                     </div>
                 </div>
             `;
             productList.innerHTML += productCard;
         });
+        
+        // Função para abrir o Modal
+        function openModal(productIndex, quantity) {
+            currentOrderDetails = {
+                product: products[productIndex],
+                quantity: quantity
+            };
+            orderModal.classList.remove('hidden');
+            setTimeout(() => { // Adiciona animação na abertura
+                modalContent.classList.remove('scale-95');
+                orderModal.classList.remove('opacity-0');
+            }, 10);
+        }
 
-        // Adiciona um único listener para gerenciar todos os botões de quantidade
+        // Função para fechar o Modal
+        function closeModal() {
+            modalContent.classList.add('scale-95');
+            orderModal.classList.add('opacity-0');
+            setTimeout(() => { // Espera a transição terminar para esconder
+                orderModal.classList.add('hidden');
+                deliveryForm.reset();
+            }, 300);
+        }
+
+        // Adiciona um único listener para gerenciar todos os cliques na lista de produtos
         productList.addEventListener('click', (event) => {
-            const target = event.target;
+            const target = event.target.closest('button');
+            if (!target) return;
+
             const action = target.dataset.action;
             const index = target.dataset.index;
 
-            if (!action || index === undefined) {
-                return; // Sai se o clique não foi em um botão de ação
-            }
-
+            if (index === undefined) return;
+            
             const quantityInput = document.getElementById(`quantity-${index}`);
-            const whatsappLink = document.getElementById(`whatsapp-link-${index}`);
             let currentQuantity = parseInt(quantityInput.value, 10);
 
             if (action === 'increase') {
-                currentQuantity++;
+                quantityInput.value = currentQuantity + 1;
             } else if (action === 'decrease') {
                 if (currentQuantity > 1) {
-                    currentQuantity--;
+                    quantityInput.value = currentQuantity - 1;
                 }
+            } else if (action === 'open-modal') {
+                openModal(index, quantityInput.value);
             }
-
-            quantityInput.value = currentQuantity;
-            
-            // Atualiza o link do WhatsApp com a nova quantidade
-            const product = products[index];
-            whatsappLink.href = generateWhatsappUrl(product, currentQuantity);
         });
+
+        // Listener para o formulário do modal
+        deliveryForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            
+            const formData = new FormData(deliveryForm);
+            const addressDetails = {
+                cidade: formData.get('cidade'),
+                endereco: formData.get('endereco'),
+                numero: formData.get('numero'),
+                cep: formData.get('cep'),
+                referencia: formData.get('referencia'),
+                pagamento: formData.get('pagamento')
+            };
+
+            // Constrói a mensagem final
+            const message = `
+Olá! Gostaria de fazer um pedido:
+
+*Produto:* ${currentOrderDetails.product.name}
+*Quantidade:* ${currentOrderDetails.quantity} unidade(s)
+-------------------------
+*Endereço de Entrega:*
+Cidade: ${addressDetails.cidade}
+Endereço: ${addressDetails.endereco}, Nº ${addressDetails.numero}
+CEP: ${addressDetails.cep}
+Referência: ${addressDetails.referencia || 'Nenhuma'}
+-------------------------
+*Forma de Pagamento:* ${addressDetails.pagamento}
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            
+            // Abre o WhatsApp em uma nova aba e fecha o modal
+            window.open(whatsappUrl, '_blank');
+            closeModal();
+        });
+
+        // Listeners para fechar o modal
+        cancelButton.addEventListener('click', closeModal);
+        orderModal.addEventListener('click', (event) => {
+            if (event.target === orderModal) {
+                closeModal();
+            }
+        });
+
     </script>
 </body>
 </html>
