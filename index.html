@@ -77,6 +77,10 @@
             <h2 class="text-2xl font-bold text-pine-900 mb-6 text-center">Finalizar Pedido</h2>
             <form id="delivery-form" class="space-y-4">
                 <div>
+                    <label for="nome" class="block text-sm font-medium text-gray-700">Seu Nome</label>
+                    <input type="text" id="nome" name="nome" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
+                </div>
+                <div>
                     <label for="cidade" class="block text-sm font-medium text-gray-700">Cidade</label>
                     <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-lime-500 focus:border-lime-500">
                 </div>
@@ -236,7 +240,8 @@
             event.preventDefault();
             
             const formData = new FormData(deliveryForm);
-            const addressDetails = {
+            const orderData = {
+                nome: formData.get('nome'),
                 cidade: formData.get('cidade'),
                 endereco: formData.get('endereco'),
                 numero: formData.get('numero'),
@@ -252,17 +257,19 @@
             const message = `
 Olá! Gostaria de fazer um pedido:
 
+*Cliente:* ${orderData.nome}
+-------------------------
 *Produto:* ${product.name}
 *Quantidade:* ${quantity} unidade(s)
 *Valor Total:* ${formatCurrency(totalValue)}
 -------------------------
 *Endereço de Entrega:*
-Cidade: ${addressDetails.cidade}
-Endereço: ${addressDetails.endereco}, Nº ${addressDetails.numero}
-CEP: ${addressDetails.cep}
-Referência: ${addressDetails.referencia || 'Nenhuma'}
+Cidade: ${orderData.cidade}
+Endereço: ${orderData.endereco}, Nº ${orderData.numero}
+CEP: ${orderData.cep}
+Referência: ${orderData.referencia || 'Nenhuma'}
 -------------------------
-*Forma de Pagamento:* ${addressDetails.pagamento}
+*Forma de Pagamento:* ${orderData.pagamento}
             `.trim().replace(/^\s+/gm, '');
 
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
