@@ -21,11 +21,19 @@
         .bg-wood-100 {
             background-color: #f7f3e8;
         }
+        /* Para esconder as setas padrão do input number */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type='number'] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Header -->
     <header class="bg-pine-800 text-white py-8 shadow-lg">
         <div class="container mx-auto px-6 text-center">
             <h1 class="text-4xl md:text-5xl font-extrabold tracking-wide">Azeites Argentinos</h1>
@@ -33,12 +41,10 @@
         </div>
     </header>
 
-    <!-- Seção de Apresentação (Sobre Nós) -->
     <main class="container mx-auto px-6 py-12">
         <section id="sobre" class="bg-wood-100 rounded-2xl shadow-xl p-8 md:p-16 mb-16">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                 <div>
-                    
                     <img src="https://placehold.co/800x600/5a7f5a/ffffff?text=Olival+na+Argentina" alt="Imagem de um olival na Argentina" class="rounded-xl shadow-md transform transition-transform duration-500 hover:scale-105">
                 </div>
                 <div class="text-center md:text-left">
@@ -53,16 +59,13 @@
             </div>
         </section>
 
-        <!-- Seção de Produtos -->
         <section id="produtos" class="bg-wood-100 rounded-2xl shadow-xl p-8 md:p-16">
             <h2 class="text-4xl font-extrabold text-center text-pine-900 mb-12">Nossa Seleção de Azeites</h2>
             <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-                <!-- Os produtos serão injetados aqui via JavaScript -->
-            </div>
+                </div>
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-pine-800 text-white py-8 mt-16">
         <div class="container mx-auto px-6 text-center">
             <p>&copy; 2024 Azeites Argentinos. Todos os direitos reservados.</p>
@@ -76,43 +79,86 @@
                 description: 'Azeite de azeitonas Arbequina e Picual. Sabor complexo e equilibrado com notas herbáceas. Disponível para pronta entrega.',
                 price: 'R$ 75,00',
                 image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Premium',
-                whatsappText: 'Olá, gostaria de pedir o Azeite Extra Virgem Premium.'
+                baseWhatsappText: 'Olá, gostaria de pedir' // Texto base para o WhatsApp
             },
             {
                 name: 'Azeite Orgânico Suave',
                 description: 'Produzido com métodos orgânicos. Possui um sabor suave e frutado, perfeito para pratos delicados. Disponível para pronta entrega.',
                 price: 'R$ 85,00',
                 image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Organico',
-                whatsappText: 'Olá, gostaria de pedir o Azeite Orgânico Suave.'
+                baseWhatsappText: 'Olá, gostaria de pedir'
             },
             {
                 name: 'Azeite de Pimenta Malagueta',
                 description: 'Um azeite infusionado com pimenta. Ideal para quem busca um toque picante e marcante. Disponível para pronta entrega.',
                 price: 'R$ 70,00',
                 image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Picante',
-                whatsappText: 'Olá, gostaria de pedir o Azeite de Pimenta Malagueta.'
+                baseWhatsappText: 'Olá, gostaria de pedir'
             }
         ];
 
         const productList = document.getElementById('product-list');
-        const phoneNumber = '5517992173645'; // Seu novo número de telefone
-        
-        products.forEach(product => {
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(product.whatsappText)}`;
+        const phoneNumber = '5517992173645'; // Seu número de telefone
+
+        // Função para gerar a URL do WhatsApp com base na quantidade
+        const generateWhatsappUrl = (product, quantity) => {
+            const message = `${product.baseWhatsappText} ${quantity} unidade(s) do ${product.name}.`;
+            return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        };
+
+        // Renderiza os produtos na página
+        products.forEach((product, index) => {
+            const initialUrl = generateWhatsappUrl(product, 1);
             const productCard = `
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover">
-                    <div class="p-6 text-center">
+                    <div class="p-6 text-center flex flex-col flex-grow">
                         <h3 class="text-xl font-bold text-pine-900 mb-2">${product.name}</h3>
-                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+                        <p class="text-gray-600 text-sm mb-4 flex-grow">${product.description}</p>
                         <span class="text-2xl font-bold text-gray-900 mb-4 block">${product.price}</span>
-                        <a href="${whatsappUrl}" target="_blank" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 inline-block">
+                        
+                        <div class="flex items-center justify-center my-4">
+                            <button data-index="${index}" data-action="decrease" class="h-10 w-10 text-xl font-bold bg-gray-200 rounded-l-md hover:bg-gray-300 transition-colors">-</button>
+                            <input type="number" id="quantity-${index}" value="1" min="1" readonly class="w-16 h-10 text-center border-t border-b border-gray-300 font-semibold text-lg focus:outline-none">
+                            <button data-index="${index}" data-action="increase" class="h-10 w-10 text-xl font-bold bg-gray-200 rounded-r-md hover:bg-gray-300 transition-colors">+</button>
+                        </div>
+                        
+                        <a href="${initialUrl}" id="whatsapp-link-${index}" target="_blank" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 inline-block">
                             Pedir via WhatsApp
                         </a>
                     </div>
                 </div>
             `;
             productList.innerHTML += productCard;
+        });
+
+        // Adiciona um único listener para gerenciar todos os botões de quantidade
+        productList.addEventListener('click', (event) => {
+            const target = event.target;
+            const action = target.dataset.action;
+            const index = target.dataset.index;
+
+            if (!action || index === undefined) {
+                return; // Sai se o clique não foi em um botão de ação
+            }
+
+            const quantityInput = document.getElementById(`quantity-${index}`);
+            const whatsappLink = document.getElementById(`whatsapp-link-${index}`);
+            let currentQuantity = parseInt(quantityInput.value, 10);
+
+            if (action === 'increase') {
+                currentQuantity++;
+            } else if (action === 'decrease') {
+                if (currentQuantity > 1) {
+                    currentQuantity--;
+                }
+            }
+
+            quantityInput.value = currentQuantity;
+            
+            // Atualiza o link do WhatsApp com a nova quantidade
+            const product = products[index];
+            whatsappLink.href = generateWhatsappUrl(product, currentQuantity);
         });
     </script>
 </body>
