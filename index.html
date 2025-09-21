@@ -72,7 +72,7 @@
         </div>
     </footer>
 
-    <div id="order-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+    <div id="order-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0">
         <div class="bg-wood-100 rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-lg transform transition-transform duration-300 scale-95">
             <h2 class="text-2xl font-bold text-pine-900 mb-6 text-center">Finalizar Pedido</h2>
             <form id="delivery-form" class="space-y-4">
@@ -122,18 +122,21 @@
                 name: 'Azeite Extra Virgem Premium',
                 description: 'Azeite de azeitonas Arbequina e Picual. Sabor complexo e equilibrado com notas herbáceas. Disponível para pronta entrega.',
                 price: 'R$ 75,00',
+                priceNumeric: 75.00,
                 image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Premium'
             },
             {
                 name: 'Azeite Orgânico Suave',
                 description: 'Produzido com métodos orgânicos. Possui um sabor suave e frutado, perfeito para pratos delicados. Disponível para pronta entrega.',
                 price: 'R$ 85,00',
+                priceNumeric: 85.00,
                 image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Organico'
             },
             {
                 name: 'Azeite de Pimenta Malagueta',
                 description: 'Um azeite infusionado com pimenta. Ideal para quem busca um toque picante e marcante. Disponível para pronta entrega.',
                 price: 'R$ 70,00',
+                priceNumeric: 70.00,
                 image: 'https://placehold.co/400x500/5a7f5a/ffffff?text=Azeite+Picante'
             }
         ];
@@ -141,13 +144,17 @@
         const productList = document.getElementById('product-list');
         const phoneNumber = '5517992173645'; // Seu número de telefone
 
-        // Elementos do Modal
         const orderModal = document.getElementById('order-modal');
         const modalContent = orderModal.querySelector('div');
         const deliveryForm = document.getElementById('delivery-form');
         const cancelButton = document.getElementById('cancel-button');
         
         let currentOrderDetails = {};
+
+        // Função para formatar um número como moeda brasileira (BRL)
+        const formatCurrency = (value) => {
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
 
         // Renderiza os produtos na página
         products.forEach((product, index) => {
@@ -159,13 +166,18 @@
                         <p class="text-gray-600 text-sm mb-4 flex-grow">${product.description}</p>
                         <span class="text-2xl font-bold text-gray-900 mb-4 block">${product.price}</span>
                         
-                        <div class="flex items-center justify-center my-4">
+                        <div class="flex items-center justify-center">
                             <button data-index="${index}" data-action="decrease" class="h-10 w-10 text-xl font-bold bg-gray-200 rounded-l-md hover:bg-gray-300 transition-colors">-</button>
                             <input type="number" id="quantity-${index}" value="1" min="1" readonly class="w-16 h-10 text-center border-t border-b border-gray-300 font-semibold text-lg focus:outline-none">
                             <button data-index="${index}" data-action="increase" class="h-10 w-10 text-xl font-bold bg-gray-200 rounded-r-md hover:bg-gray-300 transition-colors">+</button>
                         </div>
                         
-                        <button data-index="${index}" data-action="open-modal" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 inline-block">
+                        <div class="my-4 text-center">
+                            <span class="text-gray-600 font-medium">Total:</span>
+                            <span id="total-price-${index}" class="text-2xl font-bold text-pine-900 ml-2">${formatCurrency(product.priceNumeric)}</span>
+                        </div>
+                        
+                        <button data-index="${index}" data-action="open-modal" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 inline-block mt-auto">
                             Pedir via WhatsApp
                         </button>
                     </div>
@@ -174,30 +186,27 @@
             productList.innerHTML += productCard;
         });
         
-        // Função para abrir o Modal
         function openModal(productIndex, quantity) {
             currentOrderDetails = {
                 product: products[productIndex],
                 quantity: quantity
             };
             orderModal.classList.remove('hidden');
-            setTimeout(() => { // Adiciona animação na abertura
-                modalContent.classList.remove('scale-95');
+            setTimeout(() => {
                 orderModal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
             }, 10);
         }
 
-        // Função para fechar o Modal
         function closeModal() {
             modalContent.classList.add('scale-95');
             orderModal.classList.add('opacity-0');
-            setTimeout(() => { // Espera a transição terminar para esconder
+            setTimeout(() => {
                 orderModal.classList.add('hidden');
                 deliveryForm.reset();
             }, 300);
         }
 
-        // Adiciona um único listener para gerenciar todos os cliques na lista de produtos
         productList.addEventListener('click', (event) => {
             const target = event.target.closest('button');
             if (!target) return;
@@ -207,21 +216,28 @@
 
             if (index === undefined) return;
             
+            const product = products[index];
             const quantityInput = document.getElementById(`quantity-${index}`);
+            const totalPriceElement = document.getElementById(`total-price-${index}`);
             let currentQuantity = parseInt(quantityInput.value, 10);
 
             if (action === 'increase') {
-                quantityInput.value = currentQuantity + 1;
+                currentQuantity++;
             } else if (action === 'decrease') {
                 if (currentQuantity > 1) {
-                    quantityInput.value = currentQuantity - 1;
+                    currentQuantity--;
                 }
             } else if (action === 'open-modal') {
-                openModal(index, quantityInput.value);
+                openModal(index, currentQuantity);
+            }
+
+            if (action === 'increase' || action === 'decrease') {
+                quantityInput.value = currentQuantity;
+                const newTotal = product.priceNumeric * currentQuantity;
+                totalPriceElement.textContent = formatCurrency(newTotal);
             }
         });
 
-        // Listener para o formulário do modal
         deliveryForm.addEventListener('submit', (event) => {
             event.preventDefault();
             
@@ -235,12 +251,16 @@
                 pagamento: formData.get('pagamento')
             };
 
-            // Constrói a mensagem final
+            const product = currentOrderDetails.product;
+            const quantity = currentOrderDetails.quantity;
+            const totalValue = product.priceNumeric * quantity;
+            
             const message = `
 Olá! Gostaria de fazer um pedido:
 
-*Produto:* ${currentOrderDetails.product.name}
-*Quantidade:* ${currentOrderDetails.quantity} unidade(s)
+*Produto:* ${product.name}
+*Quantidade:* ${quantity} unidade(s)
+*Valor Total:* ${formatCurrency(totalValue)}
 -------------------------
 *Endereço de Entrega:*
 Cidade: ${addressDetails.cidade}
@@ -249,16 +269,14 @@ CEP: ${addressDetails.cep}
 Referência: ${addressDetails.referencia || 'Nenhuma'}
 -------------------------
 *Forma de Pagamento:* ${addressDetails.pagamento}
-            `.trim();
+            `.trim().replace(/^\s+/gm, ''); // Limpa espaços extras
 
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
             
-            // Abre o WhatsApp em uma nova aba e fecha o modal
             window.open(whatsappUrl, '_blank');
             closeModal();
         });
 
-        // Listeners para fechar o modal
         cancelButton.addEventListener('click', closeModal);
         orderModal.addEventListener('click', (event) => {
             if (event.target === orderModal) {
